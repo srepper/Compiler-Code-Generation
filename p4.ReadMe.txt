@@ -1,0 +1,277 @@
+Compilers- COP4620
+Project 4 - Code Generation
+Stephen Repper
+Due:  			4/18/2013
+Submission:		4/18/2013
+
+
+
+*** Description ***
+
+This program takes source code as input (assumed to be semantically sound, as 
+it would normally be analyzed for semantics first) and generates intermediate 
+code in the form of quadruples. The lexical analyzer creates and returns 
+tokens to be parsed and translated.  Each symbol is run through the parsing 
+process, and intermediate code is generated one line at a time based on the 
+symbol input.  Each line is stored in a table until the process completes, at 
+which point the table is printed to the screen.
+
+
+*** Running the program ***
+
+To compile the source code, enter the following at the prompt:
+	$ make
+
+An executable file, p4, is included in the shar file.  to run the program with 
+the proper input file, type:
+	$ p4 file.ext
+
+where 'file.ext' is the name of the source code with the appropriate extension.
+
+The program will execute, and output will be printed to the screen.  No files 
+are created by the program.
+
+
+
+*** Testing ***
+
+Testing was conducted with an large batch of .txt and .c files, which have 
+been included in a .zip file.  Due to the high volume of test files, log files 
+were not created during testing.  All files produced the expected results.
+
+
+
+*** Hierarchy ***
+
+It should be noted that not every function is elaborated under Parser.java, as 
+there is an incredibly large number of functions to reflect the grammar rules.  
+Each grammar function follows its logic using if/else statements, and the 
+appropriate code generation techniques have been inserted alongside the 
+grammar rules.
+
+[CodeGen.java]
+main()
+	create a new CodeGen object with args[0]
+	call run() on CodeGen object
+
+Semantic(String arg) - Constructor
+	create a new File object with arg
+	create a new LexicalAnalyzer object with file
+	set File to null for garbage collection
+	set nextToken to next token from lex
+	create new Output object
+
+run()
+	call first grammar function - program()
+	call print() on Output object
+
+accept()
+	set nextToken to next token from lex
+
+parseFail()
+	print "Parse failed."
+	exit program (code 1)
+
+Grammar functions
+	A comprehensive list of grammar functions is found at the end of this file.
+
+[Output.java]
+Output() - Constructor
+	create new Vector<String[]> (output table)
+
+add()
+	add an empty String array to output table and increment table index
+
+add(String[] s)
+	add String array s to table, set s[0] to index, and increment table index
+
+get(int index)
+	return the String array from the specified index
+
+getData()
+	return the String array from the current index
+
+getIndex()
+	return table index + 1 (represents output value of index)
+
+getOperation()
+	return element 1 of current String array
+
+getOp1
+	return element 2 of current String array (operand 1)
+
+getOp2
+	return element 3 of current String array (operand 2)
+
+getResult
+	return element 4 of current string array
+
+print()
+	prints the table to screen, line-by-line, into an organized format
+
+setIndex(String index)
+	set element 0 of the current String array
+
+setOperation(String op)
+	set element 1 of the current String array
+
+setOp1(String op1)
+	set element 2 of the current String array
+
+set Op2(String op2)
+	set element 3 of the current String array
+
+setResult(String result)
+	set element 4 of the current String array
+
+setResult(int i, String result)
+	set element 4 of the specified String array
+
+size()
+	return size if output table in rows
+
+
+[Element.java]
+Element() - Constructor
+	default constructor specified of necessity
+
+Element(String[] s)
+	set data to String array s
+
+setComp(String s)
+	set comp to specified comparison operator as a string
+	set breakIndex to int value based on comparison
+
+setOperation(String s)
+	set element 1 of data String array
+
+setOp1(String s)
+	set element 2 of data String array
+
+setOp2(String s)
+	set element 3 of data String array
+
+setResult(String s)
+	set element 4 of data String array
+
+setVar(String s)
+	set var varabile to s
+
+getArray()
+	return data String array
+
+getBreak()
+	return the appropriate break string based on breakIndex
+
+getData(int i)
+	return element i of data String array
+
+getOp1()
+	return element 2 of data String array
+
+getOp2()
+	return element 3 of data String array
+
+getResult()
+	return element 4 of data String array
+
+getVar()
+	return var
+
+
+[LexicalAnalyzer.java]
+LexicalAnalyzer(File f) - Constructor
+	set file to f
+	if file is invalid or can't be read
+		print error and exit program
+	create Scanner (input) to read file
+
+getNextToken()
+	while token Vector is empty
+		if getMoreTokens() fails
+			return $ (end of file marker)
+	set returnToken to first token of token Vector
+	remove first token of Vector
+	return returnToken
+
+getMoreTokens()
+	while token Vector is empty
+		if input has next line
+			analyze() next line of input
+		else
+			return false
+	return true
+
+analyze(String s)
+	This method remains the same as the former implementation of 
+	LexicalAnalyzer.java with the exception of calls to print() being changed
+	to instead call addToken().
+
+addToken(String token)
+	This is the former print() method, which has been modified to create a new 
+	Token object for each token found and then add it to a Vector containing 
+	all of the tokens for the current line of input.
+
+isSpecialSymbol(String token)
+	This method remains the same as its previous implementation.
+
+
+[Token.java]
+Token(String tok, String typ) -  Constructor
+	set token to tok
+	set type to typ
+
+getToken()
+	return token
+
+getType()
+	return type
+
+
+GRAMMAR FUNCTIONS (Parser.java):
+	program()
+	decList()
+	decListTwo()
+	dec()
+	decTwo()
+	typeSpec()
+	varDec()
+	funDec()
+	params()
+	paramList()
+	pListTwo()
+	param()
+	paramPost()
+	voidParam()
+	cmpndStmt()
+	localDecs()
+	stmtList()
+	statement()
+	expnStmt()
+	selStmt()
+	selStmtTwo()
+	iterStmt()
+	returnStmt()
+	returnTwo()
+	expression()
+	expressOther()
+	expressID()
+	expressIDTwo()
+	expressIDVar()
+	expressIDCall()
+	var()
+	simpleExpn()
+	relop()
+	addExpn()
+	addExpnTwo()
+	addop()
+	term()
+	termTwo()
+	mulop()
+	factor()
+	factorAlt()
+	iden()
+	call()
+	args()
+	argList()
+	argListTwo()
